@@ -136,3 +136,6 @@ proj_maths/conf.py
 
 # PyCharm
 .idea
+
+# .env
+.env
