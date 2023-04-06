@@ -133,3 +133,6 @@ dmypy.json
 
 # Django secret key
 proj_maths/conf.py
+
+# PyCharm
+.idea
