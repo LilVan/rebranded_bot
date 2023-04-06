@@ -13,6 +13,7 @@ class Doctors(models.Model):
     specialty = models.ForeignKey('Specialties', models.DO_NOTHING)
     doctor_last_name = models.TextField()
     doctor_first_name = models.TextField()
+    doctor_user_name = models.TextField(default=None, blank=True, null=True)
     doctor_patronymic = models.TextField(blank=True, null=True)
     doctor_fee = models.TextField()  # This field type is a guess.
 
