@@ -2,10 +2,18 @@ from django.shortcuts import render
 from django.core.cache import cache
 from . import terms_work
 import random
+from .models import Doctors
 
+
+def db_get_doctors():
+    doctors = []
+    for i, item in enumerate(Doctors.objects.all()):
+        doctors.append([i+1, item.doctor_last_name, item.doctor_first_name])
+    return doctors
 
 def index(request):
-    return render(request, "index.html")
+    doctors = db_get_doctors()
+    return render(request, "index.html", context={"d": doctors})
 
 
 def terms_list(request):
