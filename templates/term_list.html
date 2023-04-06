@@ -6,7 +6,9 @@
 
 {% block page-lead %}
 Все термины извлекаются из БД/файла и динамически вставляются в таблицу.
-{{ slug }}
+{% if slug %}
+ Получен slug = {{ slug }}.
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -21,10 +23,6 @@
             </tr>
           </thead>
           <tbody>
-            {% if len(terms) == 1 %}  <!-- TODO: Could not parse the remainder  -->
-             {{ terms }}
-            {% endif %}
-            {% if len(terms) > 1 %}
                 {% for cnt, term, definition in terms %}
                 <tr>
                     <td class="py-3">{{ cnt }}</td>
@@ -32,7 +30,6 @@
                     <td class="py-3">{{ definition }}</td>
                 </tr>
                 {% endfor %}
-            {% endif %}
           </tbody>
         </table>
       </div>
