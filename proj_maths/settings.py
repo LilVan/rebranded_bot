@@ -36,7 +36,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'proj_maths',
-    'django.contrib.admin',
+    'django.contrib.admin',  # Подключение admin
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
