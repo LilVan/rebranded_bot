@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from . import terms_work
 from . import quiz
+import django.contrib.messages
 
 
 def index(request):
@@ -73,6 +74,7 @@ def check_quiz(request):
                 .record_user_answer(request.POST.get("answer" + "-" + str(i)))
         answers = quizzes[request.session.session_key].get_user_answers()
         marks = quizzes[request.session.session_key].check_quiz()
+        django.contrib.messages.success(request, "Квиз завершен!")
         return render(request, "quiz.html", context={"terms": quizzes[request.session.session_key].qna,
                                                      "quiz_start": False,
                                                      "answers": answers,

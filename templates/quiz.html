@@ -48,11 +48,11 @@
         <button type="submit" class="btn btn-primary" formaction="/check-quiz">Проверить</button>
         </form>
         {% endif %}
-        {% if messages %}
+        {% if messages %} <!-- Это код для django.contrib.messages -->
         {% for message in messages %}
             {{ message }}
         {% endfor %}
-        {% endif %}
+        {% endif %}       <!-- Это код для django.contrib.messages -->
     </div>
 </div>
 {% endblock %}

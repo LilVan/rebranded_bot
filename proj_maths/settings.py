@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',  # Чтобы начать использовать сессии, выполните python manage.py migrate --run-syncdb
-    'django.contrib.messages',
+    'django.contrib.messages',  # Вывод сообщений на страницы
     'django.contrib.staticfiles',
 ]
 
