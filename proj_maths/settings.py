@@ -31,6 +31,7 @@ DEBUG = bool(os.getenv("DEBUG"))
 
 ALLOWED_HOSTS = []
 
+TELEGRAM_API_TOKEN = str(os.getenv("TELEGRAM_API_TOKEN"))
 
 # Application definition
 

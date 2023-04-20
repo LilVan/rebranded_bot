@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from . import terms_work
 from . import quiz
+from django.conf import settings
+import telebot
+TOKEN = settings.TELEGRAM_API_TOKEN
+bot = telebot.TeleBot(TOKEN)
 
 
 def index(request):
@@ -78,3 +82,10 @@ def check_quiz(request):
                                                      "answers": answers,
                                                      "marks": marks})
     return redirect("/quiz")
+
+@bot.message_handler(content_types=['text'])
+def send_echo(message):
+    bot.reply_to(message, message.text)
+
+
+bot.polling(none_stop=True)
