@@ -35,10 +35,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'proj_maths',  # Нужно для работы templatetags и многих других функций
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'django.contrib.sessions',  # Чтобы начать использовать сессии, выполните python manage.py migrate --run-syncdb
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]

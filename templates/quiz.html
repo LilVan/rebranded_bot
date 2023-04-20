@@ -1,0 +1,58 @@
+{% extends "base_page.html" %}
+
+{% block page-title %}
+Квиз
+{% endblock %}
+
+{% block page-lead %}
+Вопросы случайным образом генерируются из файла и динамически вставляются в таблицу.
+{% endblock %}
+
+{% block content %}
+<div class="container px-4 py-5" id="terms-table">
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th scope="col" class="py-3">#</th>
+              <th scope="col" class="py-3">Вопрос</th>
+              <th scope="col" class="py-3">Ответ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cnt, term, definition in terms %}
+            <tr>
+                <td class="py-3">{{ cnt }}</td>
+                <td class="py-3">{{ term }}</td>
+                <td class="py-3">
+                    {% if quiz_start %}
+                    <form method="post">
+                        <label for="answer-{{ cnt }}">Ваш ответ:</label>
+                        <input type="text" class="form-control input-lg" name="answer-{{ cnt }}" id="answer-{{ cnt }}">
+                    {% endif %}
+                    {% if not quiz_start %}
+                        {% load index %}
+                        {% if definition != answers|index:forloop.counter0 %}
+                             <s>{{ answers|index:forloop.counter0 }}</s> {{ definition }}
+                        {% else %}
+                            {{ definition }}
+                        {% endif %}
+                        {{ marks|index:forloop.counter0 }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if quiz_start %}
+        <button type="submit" class="btn btn-primary" formaction="/check-quiz">Проверить</button>
+        </form>
+        {% endif %}
+        {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
