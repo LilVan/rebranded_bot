@@ -81,11 +81,37 @@ def check_quiz(request):
                                                      "quiz_start": False,
                                                      "answers": answers,
                                                      "marks": marks})
-    return redirect("/quiz")
+        return redirect("/quiz")
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    global quizzes
+    if 'quizzes' in globals():
+        quizzes[message.from_user.id] = quiz.Quiz()
+    else:
+        quizzes = dict()
+        quizzes[message.from_user.id] = quiz.Quiz()
+
+    term = quizzes[message.from_user.id].next_qna()[1]
+    bot.send_message(message.chat.id, term)
+
 
 @bot.message_handler(content_types=['text'])
-def send_echo(message):
-    bot.reply_to(message, message.text)
+def check_answer(message):
+    if 'quizzes' not in globals():
+        bot.reply_to(message, 'Квиз не начат. Введите /start, чтобы начать квиз.')
+    elif message.from_user.id not in quizzes:
+        bot.reply_to(message, 'Квиз не начат. Введите /start, чтобы начать квиз.')
+    else:
+        try:
+            term = quizzes[message.from_user.id].next_qna()[1]
+            bot.send_message(message.chat.id, term)
+            quizzes[message.from_user.id].record_user_answer(message.text)
+        except StopIteration:
+            quizzes[message.from_user.id].record_user_answer(message.text)
+            results = " ".join(quizzes[message.from_user.id].check_quiz())
+            bot.send_message(message.chat.id, results)
 
 
-bot.polling(none_stop=True)
+bot.polling(non_stop=True)

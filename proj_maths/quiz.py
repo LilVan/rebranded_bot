@@ -15,13 +15,19 @@ class Quiz:
             qna_item = qna_item + rt[1:]
             self.qna.append(qna_item)
 
-        self.user_answers = []
+            self.user_answers = []
+            self.qna_iter = iter(self.qna)  # Объект-итератор для вопросов-ответов
+
+    def next_qna(self):
+        """Возвращает очередной вопрос"""
+        return next(self.qna_iter)
 
     def record_user_answer(self, a):
         """Добавляет ответ пользователя в переменную экземпляра (список ответов)"""
         self.user_answers.append(a)
 
     def get_user_answers(self):
+        """Возвращает список ответов пользователя"""
         return self.user_answers
 
     def check_quiz(self):
