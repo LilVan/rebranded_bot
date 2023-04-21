@@ -1,3 +1,4 @@
+import copy
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from . import terms_work
@@ -75,13 +76,15 @@ def check_quiz(request):
         for i in range(1, 5+1):  #TODO: вынести количество вопросов в .env
             quizzes[request.session.session_key]\
                 .record_user_answer(request.POST.get("answer" + "-" + str(i)))
-        answers = quizzes[request.session.session_key].get_user_answers()
-        marks = quizzes[request.session.session_key].check_quiz()
-        return render(request, "quiz.html", context={"terms": quizzes[request.session.session_key].qna,
+        terms = copy.copy(quizzes[request.session.session_key].qna)
+        answers = copy.copy(quizzes[request.session.session_key].get_user_answers())
+        marks = copy.copy(quizzes[request.session.session_key].check_quiz())
+        del quizzes[request.session.session_key]
+        return render(request, "quiz.html", context={"terms": terms,
                                                      "quiz_start": False,
                                                      "answers": answers,
                                                      "marks": marks})
-        return redirect("/quiz")
+    return redirect("/quiz")
 
 
 @bot.message_handler(commands=['start'])
@@ -112,6 +115,7 @@ def check_answer(message):
             quizzes[message.from_user.id].record_user_answer(message.text)
             results = " ".join(quizzes[message.from_user.id].check_quiz())
             bot.send_message(message.chat.id, results)
+            del quizzes[message.from_user.id]
 
 
 bot.polling(non_stop=True)
