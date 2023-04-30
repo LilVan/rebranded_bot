@@ -36,3 +36,37 @@ class Quiz:
         answers_true_false = [i == j for i, j in zip(self.user_answers, correct_answers)]
         answers_emoji = [str(atf).replace('False', '❌').replace('True', '✅') for atf in answers_true_false]
         return answers_emoji
+
+def country_check(text):
+    with open("./data/brands.csv", "r", encoding="utf-8") as f:
+        for line in f.read().splitlines()[1:]:
+            name, action, industry, country = line.split(";")
+            if country == text:
+                return True
+    return False
+
+
+def name_check(text):
+    with open("./data/brands.csv", "r", encoding="utf-8") as f:
+        for line in f.read().splitlines()[1:]:
+            name, action, industry, country = line.split(";")
+            if name == text:
+                return True
+    return False
+
+
+def get_info(name_info='', country_info=''):
+    with open("./data/brands.csv", "r", encoding="utf-8") as f:
+        if name_info != '':
+            for line in f.read().splitlines()[1:]:
+                name, action, industry, country = line.split(";")
+                if name_info == name:
+                    return [name, action, industry, country]
+
+        elif country_info != '':
+            res = []
+            for line in f.read().splitlines()[1:]:
+                name, action, industry, country = line.split(";")
+                if country_info == country:
+                    res.append(name)
+            return res

@@ -5,6 +5,8 @@ from . import terms_work
 from . import quiz
 from django.conf import settings
 import telebot
+from telebot import types
+
 TOKEN = settings.TELEGRAM_API_TOKEN
 bot = telebot.TeleBot(TOKEN)
 
@@ -86,8 +88,8 @@ def check_quiz(request):
                                                      "marks": marks})
     return redirect("/quiz")
 
-
-@bot.message_handler(commands=['start'])
+"""
+@bot.message_handler(commands=['start', 'help'])
 def start(message):
     global quizzes
     if 'quizzes' in globals():
@@ -116,6 +118,23 @@ def check_answer(message):
             results = " ".join(quizzes[message.from_user.id].check_quiz())
             bot.send_message(message.chat.id, results)
             del quizzes[message.from_user.id]
+"""
 
+@bot.message_handler(content_types=['text'])
+def message_reply(message):
+    if quiz.country_check(message.text):
+        info = quiz.get_info(country_info=message.text)
+        bot.send_message(message.chat.id, f'Brands from {message.text} operating in Russia:\n\n'+''
+                         .join([f'{x}\n' for x in info]))
+    elif quiz.name_check(message.text):
+        info = quiz.get_info(name_info=message.text)
+        bot.send_message(message.chat.id, f'Name: {info[0]}\n\n'
+                                          f'Action: {info[1]}\n\n'
+                                          f'Industry: {info[2]}\n\n'
+                                          f'Country: {info[3]}\n\n')
+    else:
+        bot.send_message(message.chat.id, 'Please enter a brand name to see if it is continuing business in Russia.'
+                                          '\n\n'
+                                          'Enter a country name to see all its working brands')
 
 bot.polling(non_stop=True)

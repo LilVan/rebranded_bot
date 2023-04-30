@@ -277,7 +277,7 @@ def doubledecode(s, as_unicode=True):
 
 
 with open('brands.csv', mode='w', encoding="utf-8") as brands:
-    brand_info = csv.writer(brands, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    brand_info = csv.writer(brands, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
     brand_info.writerow(['Name', 'Action', 'Industry', 'Company'])
 
     pars = s.find_all('tr', class_="table__row")
@@ -286,7 +286,7 @@ with open('brands.csv', mode='w', encoding="utf-8") as brands:
         row = []
         for attr in re.finditer(re.compile("<td class=\"table__cell\">(.* ?)<\/td>"), str(par)):
             block += 1
-            row += [attr.group(1)]
+            row += [attr.group(1).replace(';', ',')]
             if block % 4 == 0:
                 brand_info.writerow(row)
                 row = []
