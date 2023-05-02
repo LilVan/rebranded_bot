@@ -6,6 +6,7 @@ from . import quiz
 from django.conf import settings
 import telebot
 
+
 TOKEN = settings.TELEGRAM_API_TOKEN
 bot = telebot.TeleBot(TOKEN)
 
@@ -96,11 +97,14 @@ def check_answer(message):
         quizzes[message.from_user.id].is_start = False
 
     else:
-        bot.send_message(message.chat.id, 'Please enter a brand name to see if it is continuing business in Russia'
+        bot.send_message(message.chat.id, '<b>Here is my feature list:</b>\n\n'
+                                          '- Enter a <b>brand name</b> to see if it is continuing business in '
+                                          'Russia'
                                           '\n\n'
-                                          'Enter a country name to see all its working brands'
+                                          '- Enter a <b>country name</b> to see all its working brands'
                                           '\n\n'
-                                          'If you want see the list of rebranded companies type \'rebranded\'')
+                                          '- If you want see the list of rebranded companies type <b>rebranded</b>',
+                         parse_mode='html')
 
 
 def start(message):

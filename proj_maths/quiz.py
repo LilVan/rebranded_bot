@@ -98,5 +98,5 @@ def rebranded():
         for line in f.read().splitlines()[1:]:
             name, action, industry, country, rus_name = line.split(";")
             if rus_name != ' ':
-                lines += [f'{name} -> {rus_name}']
+                lines += [f'{name} ➡️ {rus_name}']
         return "\n\n".join(lines)
