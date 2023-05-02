@@ -5,7 +5,6 @@ from . import terms_work
 from . import quiz
 from django.conf import settings
 import telebot
-from telebot import types
 
 TOKEN = settings.TELEGRAM_API_TOKEN
 bot = telebot.TeleBot(TOKEN)
@@ -52,11 +51,12 @@ def show_stats(request):
     stats = terms_work.get_terms_stats()
     return render(request, "stats.html", stats)
 
+
 """Глобальная переменная, в которой хранится словарь:
 ключи -- ключи сессий, значения -- объекты Quiz."""
 global quizzes
 
-
+"""
 def start_quiz(request):
     if not request.session.session_key:
         request.session.create()
@@ -70,12 +70,13 @@ def start_quiz(request):
 
     return render(request, "quiz.html", context={"terms": quizzes[request.session.session_key].qna,
                                                  "quiz_start": True})
+"""
 
 
 def check_quiz(request):
     if request.method == "POST":
         global quizzes
-        for i in range(1, 5+1):  #TODO: вынести количество вопросов в .env
+        for i in range(1, 5+1):  # TODO: вынести количество вопросов в .env
             quizzes[request.session.session_key]\
                 .record_user_answer(request.POST.get("answer" + "-" + str(i)))
         terms = copy.copy(quizzes[request.session.session_key].qna)
@@ -88,37 +89,30 @@ def check_quiz(request):
                                                      "marks": marks})
     return redirect("/quiz")
 
-"""
-@bot.message_handler(commands=['start', 'help'])
+
+def check_answer(name, message):
+    if 'quizzes' in globals() and quizzes[message.from_user.id].is_start:
+        quiz.write_rus_name(name, message.text)
+        quizzes[message.from_user.id].is_start = False
+
+    else:
+        bot.send_message(message.chat.id, 'Please enter a brand name to see if it is continuing business in Russia'
+                                          '\n\n'
+                                          'Enter a country name to see all its working brands'
+                                          '\n\n'
+                                          'If you want to add a business operating in Russia print \'add\'')
+
+
 def start(message):
     global quizzes
     if 'quizzes' in globals():
-        quizzes[message.from_user.id] = quiz.Quiz()
+        quizzes[message.from_user.id] = quiz.Quiz(message.text)
     else:
         quizzes = dict()
-        quizzes[message.from_user.id] = quiz.Quiz()
+        quizzes[message.from_user.id] = quiz.Quiz(message.text)
 
-    term = quizzes[message.from_user.id].next_qna()[1]
-    bot.send_message(message.chat.id, term)
+    # term = quizzes[message.from_user.id].next_qna()[1]
 
-
-@bot.message_handler(content_types=['text'])
-def check_answer(message):
-    if 'quizzes' not in globals():
-        bot.reply_to(message, 'Квиз не начат. Введите /start, чтобы начать квиз.')
-    elif message.from_user.id not in quizzes:
-        bot.reply_to(message, 'Квиз не начат. Введите /start, чтобы начать квиз.')
-    else:
-        try:
-            term = quizzes[message.from_user.id].next_qna()[1]
-            bot.send_message(message.chat.id, term)
-            quizzes[message.from_user.id].record_user_answer(message.text)
-        except StopIteration:
-            quizzes[message.from_user.id].record_user_answer(message.text)
-            results = " ".join(quizzes[message.from_user.id].check_quiz())
-            bot.send_message(message.chat.id, results)
-            del quizzes[message.from_user.id]
-"""
 
 @bot.message_handler(content_types=['text'])
 def message_reply(message):
@@ -128,13 +122,18 @@ def message_reply(message):
                          .join([f'{x}\n' for x in info]))
     elif quiz.name_check(message.text):
         info = quiz.get_info(name_info=message.text)
+        start(message)
         bot.send_message(message.chat.id, f'Name: {info[0]}\n\n'
                                           f'Action: {info[1]}\n\n'
                                           f'Industry: {info[2]}\n\n'
-                                          f'Country: {info[3]}\n\n')
+                                          f'Country: {info[3]}\n\n'+''
+                         .join([f'Текущее имя: {info[4]}\n\n' if len(info) == 5 else '']))
+        bot.send_message(message.chat.id, f'If you know how this brand is currently called in Russia, then please '
+                                          f'write \'имя\'')
+    elif message.text == 'имя':
+        bot.send_message(message.chat.id, 'Write the name of the brand in Russian')
     else:
-        bot.send_message(message.chat.id, 'Please enter a brand name to see if it is continuing business in Russia.'
-                                          '\n\n'
-                                          'Enter a country name to see all its working brands')
+        check_answer(quizzes[message.from_user.id].name, message)
+
 
 bot.polling(non_stop=True)
