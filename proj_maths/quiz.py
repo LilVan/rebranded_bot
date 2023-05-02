@@ -90,3 +90,13 @@ def write_rus_name(name_info, rus_name_info):
                 lines += [line]
     with open("./data/brands.csv", "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+
+
+def rebranded():
+    with open("./data/brands.csv", "r", encoding="utf-8") as f:
+        lines = []
+        for line in f.read().splitlines()[1:]:
+            name, action, industry, country, rus_name = line.split(";")
+            if rus_name != ' ':
+                lines += [f'{name} -> {rus_name}']
+        return "\n\n".join(lines)

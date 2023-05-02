@@ -90,9 +90,9 @@ def check_quiz(request):
     return redirect("/quiz")
 
 
-def check_answer(name, message):
+def check_answer(message):
     if 'quizzes' in globals() and quizzes[message.from_user.id].is_start:
-        quiz.write_rus_name(name, message.text)
+        quiz.write_rus_name(quizzes[message.from_user.id].name, message.text)
         quizzes[message.from_user.id].is_start = False
 
     else:
@@ -100,7 +100,7 @@ def check_answer(name, message):
                                           '\n\n'
                                           'Enter a country name to see all its working brands'
                                           '\n\n'
-                                          'If you want to add a business operating in Russia print \'add\'')
+                                          'If you want see the list of rebranded companies type \'rebranded\'')
 
 
 def start(message):
@@ -131,9 +131,11 @@ def message_reply(message):
         bot.send_message(message.chat.id, f'If you know how this brand is currently called in Russia, then please '
                                           f'write \'имя\'')
     elif message.text == 'имя':
-        bot.send_message(message.chat.id, 'Write the name of the brand in Russian')
+        bot.send_message(message.chat.id, 'Write the name of the brand in Russia')
+    elif message.text == 'rebranded':
+        bot.send_message(message.chat.id, quiz.rebranded())
     else:
-        check_answer(quizzes[message.from_user.id].name, message)
+        check_answer(message)
 
 
 bot.polling(non_stop=True)
