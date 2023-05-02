@@ -33,5 +33,5 @@ with open('brands.csv', mode='w', encoding="utf-8") as brands:
             block += 1
             row += [attr.group(1).replace(';', ',')]
             if block % 4 == 0:
-                brand_info.writerow(row+[' '])
+                brand_info.writerow(row+['None'])
                 row = []
