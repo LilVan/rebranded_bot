@@ -78,6 +78,16 @@ def get_info(name_info='', country_info=''):
             return res
 
 
+def get_countries():
+    with open("./data/brands.csv", "r", encoding="utf-8") as f:
+        lines = []
+        for line in f.read().splitlines()[1:]:
+            name, action, industry, country, rus_name = line.split(";")
+            if country not in lines:
+                lines += [f'{country}']
+        return sorted(lines)
+
+
 def write_rus_name(name_info, rus_name_info):
     with open("./data/brands.csv", "r", encoding="utf-8") as f:
         lines = []
@@ -98,5 +108,5 @@ def rebranded():
         for line in f.read().splitlines()[1:]:
             name, action, industry, country, rus_name = line.split(";")
             if rus_name != ' ':
-                lines += [f'{name} ➡️ {rus_name}']
+                lines += [f'{name} ➡ {rus_name}']
         return "\n\n".join(lines)

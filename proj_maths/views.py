@@ -1,10 +1,12 @@
 import copy
+
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from . import terms_work
 from . import quiz
 from django.conf import settings
 import telebot
+from telebot import  types
 
 
 TOKEN = settings.TELEGRAM_API_TOKEN
@@ -105,6 +107,12 @@ def check_answer(message):
                                           '\n\n'
                                           '- If you want see the list of rebranded companies type <b>rebranded</b>',
                          parse_mode='html')
+        markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+        item1 = types.InlineKeyboardButton('Choose country')
+        item2 = types.InlineKeyboardButton('rebranded')
+        markup.add(item1, item2)
+
+        bot.send_message(message.chat.id, text='Choose action:', reply_markup=markup)
 
 
 def start(message):
@@ -138,6 +146,11 @@ def message_reply(message):
         bot.send_message(message.chat.id, 'Write the name of the brand in Russia')
     elif message.text == 'rebranded':
         bot.send_message(message.chat.id, quiz.rebranded())
+    elif message.text == 'Choose country':
+        markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+        for country in quiz.get_countries():
+            markup.add(types.InlineKeyboardButton(country))
+        bot.send_message(message.chat.id, text='List of countries:', reply_markup=markup)
     else:
         check_answer(message)
 
